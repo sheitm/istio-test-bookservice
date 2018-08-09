@@ -1,27 +1,26 @@
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
-  name: pubsub-in-metervalues
+  name: bookservice
 spec:
   replicas: 3
   template:
     metadata:
       labels:
-        app: pubsub
-        component: in-metervalues
-        microservice-type: worker
+        app: bookservice
+        microservice-type: api
     spec:
       volumes:
       - name: google-cloud-key
         secret:
-          secretName: gcp.ace-bigdata.files
+          secretName: gcp.creds
       containers:
-      - name: pubsub-in-metervalues
-        image: containerregistryprod.azurecr.io/pubsub-in-metervalues:imagetag
+      - name: bookservice
+        image: gcr.io/hafslund-istio-test/github-sheitm-istio-test-bookservice:1.0.1
         imagePullPolicy: Always
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
         env:
           - name: GOOGLE_APPLICATION_CREDENTIALS
-            value: /var/secrets/google/creds-pubsub.json
+            value: /var/secrets/google/datastore
